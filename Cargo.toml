@@ -1,7 +1,12 @@
 [package]
-name = "video-editor"
+name = "framix"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+description = "A simple yet powerful Rust-based video editor wrapper for FFmpeg"
+license = "MIT"
+repository = "https://github.com/yourusername/framix"
+keywords = ["ffmpeg", "video", "editor", "cli", "timelapse"]
+categories = ["multimedia::video", "command-line-utilities"]
 
 [dependencies]
 anyhow = "1.0.100"

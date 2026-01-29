@@ -1,7 +1,6 @@
 /target
-3_idiots_guitar.mp3             
-combined.mp4                    
-mankatha2.mp4                                         
-fast.mp4                                              
-timelapse-with-audio.mp4                      
-mankatha1.mp4                   
+**/*.rs.bk
+*.mp4
+*.mp3
+*.mov
+.DS_Store
