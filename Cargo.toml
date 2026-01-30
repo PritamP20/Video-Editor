@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "A simple yet powerful Rust-based video editor wrapper for FFmpeg"
 license = "MIT"
-repository = "https://github.com/yourusername/framix"
+repository = "https://github.com/pritamp20/framix"
 keywords = ["ffmpeg", "video", "editor", "cli", "timelapse"]
 categories = ["multimedia::video", "command-line-utilities"]
 
