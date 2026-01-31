@@ -5,7 +5,7 @@ edition = "2021"
 description = "A simple yet powerful Rust-based video editor wrapper for FFmpeg"
 license = "MIT"
 repository = "https://github.com/pritamp20/framix"
-keywords = ["ffmpeg", "video", "editor", "cli", "fast forward"]
+keywords = ["ffmpeg", "video", "editor", "cli", "fast-forward"]
 categories = ["multimedia::video", "command-line-utilities"]
 
 [dependencies]
