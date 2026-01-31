@@ -15,7 +15,7 @@ A Rust-based command-line tool for basic video editing tasks, utilizing `ffmpeg`
 - [Rust](https://www.rust-lang.org/tools/install) (latest stable)
 - [FFmpeg](https://ffmpeg.org/download.html) (must be added to your system PATH)
 
-## Installation
+## Installation for Contributing
 
 ```bash
 git clone https://github.com/PritamP20/framix
