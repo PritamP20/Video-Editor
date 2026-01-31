@@ -26,34 +26,26 @@ pub struct App {
     pub active_tab: ActiveTab,
     pub running: bool,
 
-    // Combine state
     pub combine_inputs: InputField,
     pub combine_output: InputField,
 
-    // Compress state
     pub compress_input: InputField,
     pub compress_output: InputField,
     pub compress_crf: InputField,
 
-    // Add Music state
     pub music_video: InputField,
     pub music_audio: InputField,
     pub music_output: InputField,
     pub music_reduce: InputField,
 
-    // Timelapse state
     pub time_input: InputField,
     pub time_output: InputField,
     pub time_speed: InputField,
-
-    // Info state
     pub info_input: InputField,
 
-    // Global state
     pub message: String,
     pub selected_field: usize,
 
-    // Progress and Logging
     pub progress: f64,
     pub is_processing: bool,
     pub is_complete: bool,
@@ -144,18 +136,43 @@ impl App {
         self.message.clear();
     }
 
+    pub fn prev_tab(&mut self) {
+        self.active_tab = match self.active_tab {
+            ActiveTab::Combine => ActiveTab::Info,
+            ActiveTab::Compress => ActiveTab::Combine,
+            ActiveTab::AddMusic => ActiveTab::Compress,
+            ActiveTab::Timelapse => ActiveTab::AddMusic,
+            ActiveTab::Info => ActiveTab::Timelapse,
+        };
+        self.selected_field = 0;
+        self.message.clear();
+    }
+
     pub fn next_field(&mut self) {
-        let max_fields = match self.active_tab {
+        let max_fields = self.get_field_count();
+        if self.selected_field < max_fields - 1 {
+            self.selected_field += 1;
+        } else {
+            self.selected_field = 0;
+        }
+    }
+
+    pub fn prev_field(&mut self) {
+        let max_fields = self.get_field_count();
+        if self.selected_field > 0 {
+            self.selected_field -= 1;
+        } else {
+            self.selected_field = max_fields - 1;
+        }
+    }
+
+    fn get_field_count(&self) -> usize {
+        match self.active_tab {
             ActiveTab::Combine => 2,
             ActiveTab::Compress => 3,
             ActiveTab::AddMusic => 4,
             ActiveTab::Timelapse => 3,
             ActiveTab::Info => 1,
-        };
-        if self.selected_field < max_fields - 1 {
-            self.selected_field += 1;
-        } else {
-            self.selected_field = 0;
         }
     }
 
@@ -184,7 +201,6 @@ impl App {
             ("", full_text.as_str())
         };
 
-        // Determine directory and file part
         let (dir, file_part) = match current_word.rfind(std::path::MAIN_SEPARATOR) {
             Some(idx) => (&current_word[..=idx], &current_word[idx + 1..]),
             None => ("", current_word),

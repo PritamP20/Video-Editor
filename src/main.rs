@@ -14,44 +14,32 @@ enum Commands {
     Combine {
         #[arg(short, long, required = true, num_args = 1..)]
         inputs: Vec<PathBuf>,
-
         #[arg(short, long)]
         output: PathBuf,
     },
     Compress {
         #[arg(short, long)]
         input: PathBuf,
-
         #[arg(short, long)]
         output: PathBuf,
-
-        /// Constant Rate Factor (0-51, lower is better quality). Default is 23.
         #[arg(long, default_value_t = 23)]
         crf: u8,
     },
     AddMusic {
         #[arg(short, long)]
         video: PathBuf,
-
         #[arg(short, long)]
         audio: PathBuf,
-
         #[arg(short, long)]
         output: PathBuf,
-
-        /// Volume of original video audio (0.0 to 1.0, etc).
-        /// If specified, it will be mixed with the new audio.
         #[arg(long, default_value = "1.0")]
         reduce_original: String,
     },
     Timelapse {
         #[arg(short, long)]
         input: PathBuf,
-
         #[arg(short, long)]
         output: PathBuf,
-
-        /// Speed factor (e.g. 10.0 for 10x speed)
         #[arg(short, long)]
         speed: f64,
     },
@@ -65,11 +53,9 @@ mod commands;
 mod tui;
 
 fn main() -> Result<()> {
-    // Check if arguments were provided (other than the binary name)
+    commands::check_ffmpeg_installed()?;
+
     use commands::ProgressInfo;
-
-    // ...
-
     if std::env::args().len() > 1 {
         let cli = Cli::parse();
 
@@ -106,7 +92,6 @@ fn main() -> Result<()> {
             }
         }
     } else {
-        // No args? Launch TUI
         tui::run()?;
     }
 

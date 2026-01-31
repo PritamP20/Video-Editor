@@ -64,6 +64,27 @@ Show metadata about a video file (resolution, codecs, bitrate, etc.).
 framix info --input input.mp4
 ```
 
+## TUI Mode
+
+Framix now includes an interactive Terminal User Interface (TUI).
+
+```bash
+framix tui
+# or simply
+framix
+```
+
+### Keybindings
+
+| Key | Action |
+| --- | --- |
+| **Shift + Tab** | Switch Tab |
+| **Tab** | Autocomplete (files) |
+| **↑ / ↓** | Select Field |
+| **Enter** | Next Field |
+| **Shift + Enter** | Execute Command |
+| **Ctrl + C** | Quit |
+
 ## License
 
 MIT

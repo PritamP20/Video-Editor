@@ -12,10 +12,10 @@ pub fn render(frame: &mut Frame, app: &App) {
         .direction(Direction::Vertical)
         .margin(1)
         .constraints([
-            Constraint::Length(3), // Title/Tabs
-            Constraint::Min(0),    // Main Content
-            Constraint::Length(3), // Message/Status
-            Constraint::Length(1), // Help
+            Constraint::Length(3),
+            Constraint::Min(0),
+            Constraint::Length(3),
+            Constraint::Length(1),
         ])
         .split(frame.area());
 
@@ -24,8 +24,6 @@ pub fn render(frame: &mut Frame, app: &App) {
     render_message(frame, app, chunks[2]);
     render_help(frame, chunks[3]);
 }
-
-// ... existing code ...
 
 fn render_message(frame: &mut Frame, app: &App, area: Rect) {
     if app.is_processing {
@@ -40,10 +38,10 @@ fn render_message(frame: &mut Frame, app: &App, area: Rect) {
             ("Processing", Color::Green, label)
         };
 
-        // Show progress bar
         let gauge = Gauge::default()
             .block(Block::default().borders(Borders::ALL).title(title))
             .gauge_style(Style::default().fg(color))
+            .use_unicode(true)
             .percent((app.progress * 100.0) as u16)
             .label(label);
 
@@ -57,7 +55,7 @@ fn render_message(frame: &mut Frame, app: &App, area: Rect) {
 }
 
 fn render_tabs(frame: &mut Frame, app: &App, area: Rect) {
-    let titles_list = vec!["Combine", "Compress", "Add Music", "Timelapse", "Info"];
+    let titles_list = vec!["Combine", "Compress", "Add Music", "Fast Forward", "Info"];
     let inner_width = area.width.saturating_sub(2) as usize;
     let tab_width = inner_width / titles_list.len();
 
@@ -70,14 +68,21 @@ fn render_tabs(frame: &mut Frame, app: &App, area: Rect) {
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title("Framix")
+                .title(Line::from(vec![Span::styled(
+                    "Framix",
+                    Style::default()
+                        .fg(Color::Black)
+                        .bg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
+                )]))
                 .title_alignment(Alignment::Center)
                 .border_type(BorderType::Rounded),
         )
         .select(app.active_tab as usize)
         .highlight_style(
             Style::default()
-                .fg(Color::Cyan)
+                .fg(Color::Black)
+                .bg(Color::Red)
                 .add_modifier(Modifier::BOLD),
         )
         .divider("");
@@ -96,18 +101,22 @@ fn render_content(frame: &mut Frame, app: &App, area: Rect) {
 }
 
 fn render_input(frame: &mut Frame, label: &str, value: &str, is_selected: bool, area: Rect) {
-    let style = if is_selected {
-        Style::default()
-            .fg(Color::Yellow)
-            .add_modifier(Modifier::BOLD)
+    let (border_style, border_type) = if is_selected {
+        (
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD),
+            BorderType::Thick,
+        )
     } else {
-        Style::default()
+        (Style::default().fg(Color::DarkGray), BorderType::Plain)
     };
 
     let block = Block::default()
         .borders(Borders::ALL)
         .title(label)
-        .border_style(style);
+        .border_style(border_style)
+        .border_type(border_type);
 
     let paragraph = Paragraph::new(value).block(block);
     frame.render_widget(paragraph, area);
@@ -258,7 +267,21 @@ fn render_info(frame: &mut Frame, app: &App, area: Rect) {
 }
 
 fn render_help(frame: &mut Frame, area: Rect) {
-    let help = Span::raw("TAB: Autocomplete | SHIFT+TAB: Switch Tab | ENTER: Next Field | Ctrl+E / SHIFT+ENTER: Execute | Ctrl+C: Quit");
-    let paragraph = Paragraph::new(Line::from(help)).style(Style::default().fg(Color::DarkGray));
+    let help_text = vec![
+        Span::styled("SHIFT+TAB", Style::default().fg(Color::Yellow)),
+        Span::raw(": Switch Tab | "),
+        Span::styled("TAB", Style::default().fg(Color::Yellow)),
+        Span::raw(": Autocomplete | "),
+        Span::styled("↑/↓", Style::default().fg(Color::Yellow)),
+        Span::raw(": Select Field | "),
+        Span::styled("ENTER", Style::default().fg(Color::Yellow)),
+        Span::raw(": Next Field | "),
+        Span::styled("SHIFT+ENTER", Style::default().fg(Color::Green)),
+        Span::raw(": Execute | "),
+        Span::styled("CTRL+C", Style::default().fg(Color::Red)),
+        Span::raw(": Quit"),
+    ];
+    let paragraph =
+        Paragraph::new(Line::from(help_text)).style(Style::default().fg(Color::DarkGray));
     frame.render_widget(paragraph, area);
 }

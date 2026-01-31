@@ -4,6 +4,14 @@ use std::io::{BufReader, Read};
 use std::path::Path;
 use std::process::{Command, Stdio};
 
+pub fn check_ffmpeg_installed() -> Result<()> {
+    match Command::new("ffmpeg").arg("-version").output() {
+        Ok(output) if output.status.success() => Ok(()),
+        Ok(_) => Err(anyhow!("ffmpeg executable found but failed to run '-version'.")),
+        Err(_) => Err(anyhow!("FFmpeg is not installed or not in your PATH.\nPlease install FFmpeg to use Framix.\n- Mac: brew install ffmpeg\n- Linux: sudo apt install ffmpeg\n- Windows: choco install ffmpeg")),
+    }
+}
+
 pub enum ProgressInfo {
     Log(String),
     Percentage(f64),

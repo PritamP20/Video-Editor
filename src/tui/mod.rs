@@ -38,7 +38,6 @@ pub fn run() -> Result<()> {
     loop {
         terminal.draw(|f| render(f, &app))?;
 
-        // Process channel messages
         while let Ok(event) = rx.try_recv() {
             match event {
                 AppEvent::Progress(info) => match info {
@@ -46,7 +45,7 @@ pub fn run() -> Result<()> {
                     ProgressInfo::Percentage(p) => app.progress = p,
                 },
                 AppEvent::Done => {
-                    app.is_processing = true; // Keep processing view active
+                    app.is_processing = true;
                     app.is_complete = true;
                     app.message =
                         "Process Completed Successfully! Press any key to continue.".to_string();
@@ -93,10 +92,7 @@ pub fn run() -> Result<()> {
 }
 
 fn execute_command(app: &App, tx: mpsc::Sender<AppEvent>) {
-    // Clone necessary data to move into thread
     let active_tab = app.active_tab;
-    // We clone inputs because we can't pass reference to app into thread
-    // This is a bit tedious but safe
     let combine_inputs = app.combine_inputs.value.clone();
     let combine_output = app.combine_output.value.clone();
 
