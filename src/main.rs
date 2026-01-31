@@ -62,35 +62,52 @@ enum Commands {
 }
 
 mod commands;
+mod tui;
 
 fn main() -> Result<()> {
-    let cli = Cli::parse();
+    // Check if arguments were provided (other than the binary name)
+    use commands::ProgressInfo;
 
-    match &cli.command {
-        Commands::Combine { inputs, output } => {
-            commands::combine_videos(inputs, output)?;
+    // ...
+
+    if std::env::args().len() > 1 {
+        let cli = Cli::parse();
+
+        let print_progress = |info: ProgressInfo| {
+            if let ProgressInfo::Log(log) = info {
+                println!("{}", log);
+            }
+        };
+
+        match &cli.command {
+            Commands::Combine { inputs, output } => {
+                commands::combine_videos(inputs, output, print_progress)?;
+            }
+            Commands::Compress { input, output, crf } => {
+                commands::compress_video(input, output, *crf, print_progress)?;
+            }
+            Commands::AddMusic {
+                video,
+                audio,
+                output,
+                reduce_original,
+            } => {
+                commands::add_music(video, audio, output, reduce_original, print_progress)?;
+            }
+            Commands::Timelapse {
+                input,
+                output,
+                speed,
+            } => {
+                commands::timelapse(input, output, *speed, print_progress)?;
+            }
+            Commands::Info { input } => {
+                commands::get_info(input, print_progress)?;
+            }
         }
-        Commands::Compress { input, output, crf } => {
-            commands::compress_video(input, output, *crf)?;
-        }
-        Commands::AddMusic {
-            video,
-            audio,
-            output,
-            reduce_original,
-        } => {
-            commands::add_music(video, audio, output, reduce_original)?;
-        }
-        Commands::Timelapse {
-            input,
-            output,
-            speed,
-        } => {
-            commands::timelapse(input, output, *speed)?;
-        }
-        Commands::Info { input } => {
-            commands::get_info(input)?;
-        }
+    } else {
+        // No args? Launch TUI
+        tui::run()?;
     }
 
     Ok(())
